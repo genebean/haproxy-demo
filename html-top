@@ -1,0 +1,46 @@
+<html>
+<head>
+  <style>
+    body, input {
+      font-family: helvetica;
+      font-size: 12px;
+    }
+
+    h1 {
+      font-size: 14px;
+    }
+
+    form label {
+      display: block;
+    }
+
+    form textarea {
+      width: 450px;
+	  height: 80px;
+    }
+
+    .error {
+      color: #f00;
+      font-weight: bold;
+    }
+
+    .footer {
+      border-top: 1px solid #ccc;
+      font-size: 11px;
+      padding-top: 5px;
+    }
+
+    .addthis_toolbox {
+      margin-bottom: 10px;
+    }
+
+    pre.cow {
+      font-size: 18px;
+      margin-left: 40px;
+    }
+
+  </style>
+</head>
+<body>
+
+<pre class="cow">
