@@ -19,12 +19,47 @@ exec { 'make scl repo cache':
   refreshonly => true,
 }
 
+$keepalive_vip = '192.168.50.5'
+include keepalived
+
+keepalived::vrrp::script { 'check_haproxy':
+  script  => 'killall -0 haproxy',
+  weight  => '2',
+  require => Package['keepalived'],
+}
+
+if $facts['networking']['hostname'] == 'lb1' {
+  keepalived::vrrp::instance { 'VI_50':
+    interface         => 'eth0',
+    state             => 'MASTER',
+    virtual_router_id => 55,
+    priority          => 101,
+    auth_type         => 'PASS',
+    auth_pass         => 'p@55w0rd',
+    virtual_ipaddress => $keepalive_vip,
+    track_script      => 'check_haproxy',
+  }
+} else {
+  keepalived::vrrp::instance { 'VI_50':
+    interface         => 'eth1',
+    state             => 'BACKUP',
+    virtual_router_id => 55,
+    priority          => 100,
+    auth_type         => 'PASS',
+    auth_pass         => 'p@55w0rd',
+    virtual_ipaddress => $keepalive_vip,
+    track_script      => 'check_haproxy',
+  }
+}
+
 class { 'haproxy':
   package_name        => 'rh-haproxy18',
   config_dir          => '/etc/opt/rh/rh-haproxy18/haproxy',
   config_file         => '/etc/opt/rh/rh-haproxy18/haproxy/haproxy.cfg',
   config_validate_cmd => '/bin/scl enable rh-haproxy18 "haproxy -f % -c"',
   service_name        => 'rh-haproxy18-haproxy',
+  service_manage      => false,
+  merge_options       => false,
   global_options      => {
     'log'                        => '127.0.0.1 local0',
     'chroot'                     => '/var/opt/rh/rh-haproxy18/lib/haproxy',
@@ -75,7 +110,8 @@ class { 'haproxy':
 haproxy::listen {
   default:
     collect_exported => false,
-    ipaddress        => $facts['networking']['interfaces']['eth1']['ip'],
+    ipaddress        => $keepalive_vip,
+    require          => Class['keepalived'],
   ;
   'website-80':
     ports => '80',
@@ -121,5 +157,36 @@ haproxy::listen { 'stats-page':
       'admin if TRUE',
     ],
   },
+}
+
+service { 'rh-haproxy18-haproxy.service':
+  ensure  => running,
+  enable  => true,
+  require => Class['haproxy'],
+}
+
+ini_setting {
+  default:
+    ensure            => present,
+    path              => '/usr/lib/systemd/system/rh-haproxy18-haproxy.service',
+    key_val_separator => '=',
+    require           => Package['haproxy'],
+    notify            => Service['rh-haproxy18-haproxy.service'],
+  ;
+  'haproxy after keepalived':
+    section => 'Unit',
+    setting => 'After',
+    value   => 'network.target keepalived.service',
+  ;
+  'haproxy restart always':
+    section => 'Service',
+    setting => 'Restart',
+    value   => 'always',
+  ;
+  'haproxy restart delay':
+    section => 'Service',
+    setting => 'RestartSec',
+    value   => '10',
+  ;
 }
 

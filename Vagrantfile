@@ -11,8 +11,10 @@ Vagrant.configure("2") do |config|
       s.vm.hostname=vm_name
       s.vm.network "private_network", ip: "192.168.50.#{i+5}"
       s.vm.provision "shell", inline: 'echo "GATEWAYDEV=eth0" >> /etc/sysconfig/network && systemctl restart network'
+      s.vm.provision "shell", inline: 'puppet module install puppetlabs-inifile'
       s.vm.provision "shell", inline: 'puppet module install puppetlabs-haproxy'
       s.vm.provision "shell", inline: 'puppet module install puppet-selinux'
+      s.vm.provision "shell", inline: 'puppet module install puppet-keepalived'
       s.vm.provision "shell", inline: 'ln -s /vagrant/custom_facts /etc/puppetlabs/code/modules/custom_facts'
       s.vm.provision "shell", inline: "echo #{node_num} > /etc/webserver_count"
       s.vm.provision "shell", inline: 'puppet apply /vagrant/haproxy.pp'
