@@ -16,7 +16,25 @@ After running `vagrant up` you will have 5 virtual machines:
 
 The Nginx instances are running Debian to reduce the memory footprint as they only need 512MB of RAM.
 
-There is a webpage on each Debian instance that identifies what server it resides on. These pages are accessible via a floating IP (a VIP) provided by keepalived and shared among the HAProxy instances. The address is 192.168.50.5. You can access the http version via a browser or `curl http://192.168.50.5` and you can access the https version via `curl -k https://192.168.50.5` (it seems browsers don't like the self-signed cert). 
+There is a webpage on each Debian instance that identifies what server it resides on. These pages are accessible via a floating IP (a VIP) provided by keepalived and shared among the HAProxy instances. The address is 192.168.50.5. You can access the http version via a browser or `curl http://192.168.50.5` and you can access the https version via `curl -k https://192.168.50.5` (it seems browsers don't like the self-signed cert).
+
+```plain
+                    +---------------+
+                  +-+ 192.168.50.05 +-+
+                  | +---------------+ |
+                  |                   |
+                  |                   v
+          +-------v-------+   +-------+-------+
+          | 192.168.50.06 +-+-+ 192.168.50.07 |
+          +---------------+ | +---------------+
+                            |
+        +---------------------------------------+
+        |                   |                   |
+        v                   v                   v
++-------+-------+   +-------+-------+   +-------+-------+
+| 192.168.50.11 |   | 192.168.50.12 |   | 192.168.50.13 |
++---------------+   +---------------+   +---------------+
+```
 
 ### Addresses
 
