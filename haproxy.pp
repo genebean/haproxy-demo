@@ -34,12 +34,14 @@ class { 'haproxy':
     'group'                      => 'haproxy',
     'daemon'                     => '',
     'stats'                      => 'socket /var/opt/rh/rh-haproxy18/lib/haproxy/stats',
+    # lint:ignore:140chars
     # set default parameters to the intermediate configuration per https://mozilla.github.io/server-side-tls/ssl-config-generator/
     'tune.ssl.default-dh-param'  => '2048',
     'ssl-default-bind-ciphers'   => 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384',
     'ssl-default-bind-options'   => 'no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets',
     'ssl-default-server-ciphers' => 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384',
     'ssl-default-server-options' => 'no-sslv3 no-tlsv10 no-tlsv11 no-tls-tickets',
+    # lint:endignore
   },
   defaults_options    => {
     'mode'    => 'tcp',
