@@ -30,7 +30,7 @@ keepalived::vrrp::script { 'check_haproxy':
 
 if $facts['networking']['hostname'] == 'lb1' {
   keepalived::vrrp::instance { 'VI_50':
-    interface         => 'eth0',
+    interface         => 'eth1',
     state             => 'MASTER',
     virtual_router_id => 55,
     priority          => 101,
