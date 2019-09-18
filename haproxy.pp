@@ -110,7 +110,7 @@ class { 'haproxy':
 haproxy::listen {
   default:
     collect_exported => false,
-    ipaddress        => $keepalive_vip,
+    ipaddress        => '*',
     require          => Class['keepalived'],
   ;
   'website-80':
